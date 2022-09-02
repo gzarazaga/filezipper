@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.vanhack.filezipper.service.FileZipperService;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -35,7 +37,7 @@ public class FileZipperController {
 
 
 	@PostMapping(value = "/files/zip", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<byte[]> uploadFiles(@RequestPart MultipartFile[] fileData) throws IOException {
+    public ResponseEntity<Resource> uploadFiles(@RequestPart MultipartFile[] fileData) throws IOException {
         File uploadRootDir = new File("(directory)");
 
         if (!uploadRootDir.exists()) {
@@ -64,10 +66,15 @@ public class FileZipperController {
                 }
             }
         }
-        //prepare the response
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        bos.writeTo(fileZipperService.zipFiles(uploadedFiles));
-
-        return new ResponseEntity<byte[]>(bos.toByteArray(), HttpStatus.OK);
+        
+        ByteArrayResource resource = new ByteArrayResource(fileZipperService.zipFiles(uploadedFiles));
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(resource.contentLength())
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment()
+                            .filename("multiFiles.zip")
+                            .build().toString())
+                .body(resource);
     }
 }

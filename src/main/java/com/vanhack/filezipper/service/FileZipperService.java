@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class FileZipperService {
 
-    public FileOutputStream zipFiles (Map<String, FileInputStream> filesMap) throws IOException {
+    public byte[] zipFiles (Map<String, FileInputStream> filesMap) throws IOException {
         Set<String> srcFiles = filesMap.keySet();
         FileOutputStream fos = new FileOutputStream("multiCompressed.zip");
         ZipOutputStream zipOut = new ZipOutputStream(fos);
@@ -33,7 +33,22 @@ public class FileZipperService {
         }
         zipOut.close();
         fos.close();
+        
+        File zipFile = new File("multiCompressed.zip");
+        FileInputStream fileInputStream = null;
+        byte[] bFile = new byte[(int) zipFile.length()];
+        try
+        {
+           //convert file into array of bytes
+           fileInputStream = new FileInputStream(zipFile);
+           fileInputStream.read(bFile);
+           fileInputStream.close();
+        }
+        catch (Exception e)
+        {
+           e.printStackTrace();
+        }
 
-        return fos;
+        return bFile;
     }
 }
