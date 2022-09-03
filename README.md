@@ -7,7 +7,9 @@ FileZipper is a RESTFul webservice with an endpoint to receive list of files (fo
 TBD
 
 ```bash
-mvn spring-boot:run
+mvn clean install
+docker build -t filezipper-service .
+docker run -p 8080:8080 [image_id]
 ```
 
 ## Usage
