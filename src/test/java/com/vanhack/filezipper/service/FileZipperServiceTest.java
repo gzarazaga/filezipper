@@ -1,5 +1,8 @@
 package com.vanhack.filezipper.service;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -10,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ByteArrayResource;
 
 @SpringBootTest
 public class FileZipperServiceTest {
@@ -35,6 +39,13 @@ public class FileZipperServiceTest {
 		Map<String, FileInputStream> filesMap = new HashMap();
 		filesMap.put(file1.toString(), new FileInputStream(file1.toFile()));
 		filesMap.put(file2.toString(), new FileInputStream(file2.toFile()));
-		this.fileZipperService.zipFiles(filesMap);
+		byte[] zipBytes = this.fileZipperService.zipFiles(filesMap);
+		
+		assertNotNull(zipBytes);
+		
+		ByteArrayResource resource = new ByteArrayResource(zipBytes);
+		
+		assertTrue(resource.exists());
+		
 	}
 }
