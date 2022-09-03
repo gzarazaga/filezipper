@@ -19,6 +19,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.vanhack.filezipper.service.FileZipperService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ApiResponse;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 @RestController
+@Api(tags={"File Zipper Controller"})
 public class FileZipperController {
 
 	private FileZipperService fileZipperService;
@@ -35,7 +41,12 @@ public class FileZipperController {
 		this.fileZipperService = fileZipperService;
 	}
 
-
+	@ApiOperation(value = "Post a list of files to get a zip file", response = Iterable.class, tags = "fileZipper")
+	@ApiResponses(value = { 
+	      @ApiResponse(code = 200, message = "Success|OK"),
+	      @ApiResponse(code = 401, message = "not authorized!"), 
+	      @ApiResponse(code = 403, message = "forbidden!!!"),
+	      @ApiResponse(code = 404, message = "not found!!!") })
 	@PostMapping(value = "/files/zip", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<Resource> uploadFiles(@RequestPart MultipartFile[] fileData) throws IOException {
         File uploadRootDir = new File("(directory)");
