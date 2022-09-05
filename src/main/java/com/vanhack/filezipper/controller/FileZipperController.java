@@ -80,12 +80,9 @@ public class FileZipperController {
         
         ByteArrayResource resource = new ByteArrayResource(fileZipperService.zipFiles(uploadedFiles));
         return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+        		.contentType(MediaType.parseMediaType("application/zip"))
                 .contentLength(resource.contentLength())
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        ContentDisposition.attachment()
-                            .filename("multiFiles.zip")
-                            .build().toString())
+                .header("Content-disposition", "attachment; filename=multiFiles.zip")
                 .body(resource);
     }
 }
