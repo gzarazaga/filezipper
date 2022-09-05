@@ -36,7 +36,7 @@ public class FileZipperServiceTest {
         Path file1 = workingDir.resolve("test1.txt");
         Path file2 = workingDir.resolve("test2.txt");
         
-		Map<String, FileInputStream> filesMap = new HashMap();
+		Map<String, FileInputStream> filesMap = new HashMap<String, FileInputStream>();
 		filesMap.put(file1.toString(), new FileInputStream(file1.toFile()));
 		filesMap.put(file2.toString(), new FileInputStream(file2.toFile()));
 		byte[] zipBytes = this.fileZipperService.zipFiles(filesMap);

@@ -11,12 +11,18 @@ import java.util.zip.ZipOutputStream;
 
 import org.springframework.stereotype.Service;
 
+import lombok.extern.slf4j.Slf4j;
+
+
+@Slf4j
 @Service
 public class FileZipperService {
 
-    public byte[] zipFiles (Map<String, FileInputStream> filesMap) throws IOException {
+    private static final String MULTI_COMPRESSED_ZIP = "multiCompressed.zip";
+
+	public byte[] zipFiles (Map<String, FileInputStream> filesMap) throws IOException {
         Set<String> srcFiles = filesMap.keySet();
-        FileOutputStream fos = new FileOutputStream("multiCompressed.zip");
+        FileOutputStream fos = new FileOutputStream(MULTI_COMPRESSED_ZIP);
         ZipOutputStream zipOut = new ZipOutputStream(fos);
         for (String srcFile : srcFiles) {
             File fileToZip = new File(srcFile);
@@ -34,19 +40,18 @@ public class FileZipperService {
         zipOut.close();
         fos.close();
         
-        File zipFile = new File("multiCompressed.zip");
+        File zipFile = new File(MULTI_COMPRESSED_ZIP);
         FileInputStream fileInputStream = null;
         byte[] bFile = new byte[(int) zipFile.length()];
         try
         {
-           //convert file into array of bytes
            fileInputStream = new FileInputStream(zipFile);
            fileInputStream.read(bFile);
            fileInputStream.close();
         }
         catch (Exception e)
         {
-           e.printStackTrace();
+           log.error("Error reading final zip file.",e);
         }
 
         return bFile;
